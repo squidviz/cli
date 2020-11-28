@@ -1,2 +1,0 @@
-# cli
-SquidViz CLI tool
