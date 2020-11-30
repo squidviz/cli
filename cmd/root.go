@@ -18,14 +18,13 @@ var (
 	// Default arguments for viper
 	defaults = map[string]interface{}{
 		"file":    ".svfile",
-		"api-url": "https://mnemosyne.dkendal.com/api/v1/pull_requests",
+		"api-url": "https://mnemosyne.dkendal.com/api/v1/pull_requests/{{.Id}}",
 	}
 )
 
 type Root struct {
 	PullRequest PullRequest `json:"pull_request"`
 }
-
 
 type PullRequest struct {
 	Metrics []Metric `json:"data"`
