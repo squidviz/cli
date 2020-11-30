@@ -36,7 +36,7 @@ more advanced usages use the "add" command with GNU time(1).
 		type Flags struct {
 			File  string `validate:"required"`
 			Label string `validate:"required"`
-			Type  string `validate:"required,oneof=s seconds ms milliseconds ns nanosecond"`
+			Magnitude  string `validate:"required,oneof=s seconds ms milliseconds ns nanosecond"`
 			Help  string ``
 		}
 
@@ -59,19 +59,7 @@ more advanced usages use the "add" command with GNU time(1).
 			return errors.New("Argument error")
 		}
 
-		file := viper.GetString("file")
-
-		if file == "" {
-			return errors.New(`required flag "file" not set`)
-		}
-
-		label := viper.GetString("label")
-
-		if label == "" {
-			return errors.New(`required flag "label" not set`)
-		}
-
-		// Buffer all output from stdin and print to output.
+		// Buffer all output from STDIN and print to output.
 		// Just acts as a pass through so we can capture the "real time" of
 		// the command execution
 		scanner := bufio.NewScanner(cmd.InOrStdin())
@@ -87,29 +75,29 @@ more advanced usages use the "add" command with GNU time(1).
 		duration := end.Sub(start)
 
 		var value float64
-		var type_ string
+		var mag string
 
-		switch flags.Type {
+		switch flags.Magnitude {
 		case "s", "seconds":
 			value = duration.Seconds()
-			type_ = "seconds"
+			mag = "seconds"
 		case "ms", "milliseconds":
 			value = float64(duration.Milliseconds())
-			type_ = "milliseconds"
+			mag = "milliseconds"
 		case "ns", "nanoseconds":
 			value = float64(duration.Nanoseconds())
-			type_ = "nanoseconds"
+			mag = "nanoseconds"
 		}
 
 		metric := Metric{
-			Label: label,
+			Label: flags.Label,
 			Value: value,
-			Type:  type_,
+			Type:  mag,
 		}
 
-		appendMetric(file, metric)
+		appendMetric(flags.File, metric)
 
-		fmt.Fprintln(os.Stderr, label, value, type_)
+		fmt.Fprintln(os.Stderr, flags.Label, value, mag)
 
 		return nil
 	},
@@ -120,8 +108,8 @@ func init() {
 
 	timeCmd.Flags().StringP("file", "f", "", `Report output file (default $SV_FILE, ".svfile")`)
 	timeCmd.Flags().StringP("label", "l", "", `Set the label for this data point (default $SV_LABEL)`)
-	timeCmd.Flags().StringP("type", "t", "ms", `Unit of time to record with. One
-	of "seconds", "milliseconds", or "nanoseconds", or their SI symbol
+	timeCmd.Flags().StringP("magnitude", "m", "", `Unit of time to record with. (default $SV_MAGNITUDE, "ms")
+	One of "seconds", "milliseconds", or "nanoseconds", or their SI symbol
 	equivalents ("s", "ms", "ns"). Note that any unit other than "seconds" is
 	reported as an integer and will have a loss in precision!`)
 }

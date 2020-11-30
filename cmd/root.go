@@ -17,8 +17,9 @@ var (
 	cfgFile string
 	// Default arguments for viper
 	defaults = map[string]interface{}{
-		"file":    ".svfile",
-		"api-url": "https://mnemosyne.dkendal.com/api/v1/pull_requests/{{.Id}}",
+		"file":      ".svfile",
+		"magnitude": "ms",
+		"api-url":   "https://mnemosyne.dkendal.com/api/v1/pull_requests/{{.Id}}",
 	}
 )
 
