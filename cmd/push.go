@@ -49,6 +49,7 @@ var pushCmd = &cobra.Command{
 
 		token := fmt.Sprintf("Bearer %s", apiKey)
 
+		req.Method = "PUT"
 		req.Header.Set("Accepts", "application/json")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", token)
