@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -16,19 +17,29 @@ var pushCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		viper.BindPFlags(cmd.Flags())
 
-		file, err := cmd.Flags().GetString("file")
-		checkErr(err)
+		file := viper.GetString("file")
 
-		apiKey, err := cmd.Flags().GetString("api-key")
-		checkErr(err)
+		if file == "" {
+			return errors.New(`required flag "file" not set`)
+		}
 
-		apiUrl, err := cmd.Flags().GetString("api-url")
-		checkErr(err)
+		apiKey := viper.GetString("api-key")
+
+		if apiKey == "" {
+			return errors.New(`required flag "api-key" not set`)
+		}
+
+		apiUrl := viper.GetString("api-url")
+
+		if apiUrl == "" {
+			return errors.New(`required flag "api-url" not set`)
+		}
 
 		dataFile, err := os.Open(file)
 
 		if err != nil {
-			printError("couldn't read report file", err)
+			msg := fmt.Sprintf("Couldn't read report file \"%s\"", file)
+			printError(msg, err)
 		}
 
 		defer dataFile.Close()
