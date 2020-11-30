@@ -15,8 +15,14 @@ import (
 
 // pushCmd represents the push command
 var pushCmd = &cobra.Command{
-	Use:   "push --pr-node-id <node_id>",
+	Use:   "push --pr-id <pr_id>",
 	Short: "Publish metrics for this pull request.",
+	Example: `
+Running in GitHub Actions:
+
+	sv push --pr-id ${{ github.event.pull_request.id }}
+
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		viper.BindPFlags(cmd.Flags())
 
